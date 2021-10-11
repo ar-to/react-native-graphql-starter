@@ -16,12 +16,13 @@ import { gql, useQuery } from '@apollo/client';
 import {
   FlatList,
   Pressable,
-  // Button,
+  Button,
   View,
   Text,
   StyleSheet,
   Linking,
   Alert,
+  TextInput,
 } from 'react-native';
 // import OriginalWelcomeScreen from './src/components/originalWelcome.screen';
 
@@ -96,11 +97,12 @@ const ChapterItem = ({ chapter, onPress }) => {
 };
 
 function HomeScreen({ navigation }) {
-  // const { data, loading } = useQuery(PROJECTS_QUERY);
+  const [search, setSearch] = React.useState('');
+  const [searchValue, setSearchValue] = React.useState('');
   const { loading, error, data } = useQuery(PROJECTS_QUERY, {
-    variables: { search: 'mongodb' },
+    variables: { search },
   });
-  console.log('>>>>', data);
+  // console.log('>>>>', data, '\n search', search);
 
   if (error) {
     // return Error! ${error}`;
@@ -112,16 +114,25 @@ function HomeScreen({ navigation }) {
     return <Text>Loading</Text>;
   }
   return (
-    <FlatList
-      data={data.projects.nodes}
-      renderItem={({ item }) => (
-        <ChapterItem
-          chapter={item}
-          onPress={() => navigation.navigate('Project', { project: item })}
-        />
-      )}
-      keyExtractor={chapter => chapter.id.toString()}
-    />
+    <View>
+      <TextInput
+        onChangeText={setSearchValue}
+        value={searchValue}
+        placeholder="useless placeholder"
+        keyboardType="default"
+      />
+      <Button title="Search" onPress={() => setSearch(searchValue)} />
+      <FlatList
+        data={data.projects.nodes}
+        renderItem={({ item }) => (
+          <ChapterItem
+            chapter={item}
+            onPress={() => navigation.navigate('Project', { project: item })}
+          />
+        )}
+        keyExtractor={chapter => chapter.id.toString()}
+      />
+    </View>
   );
   // return (
   //   <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
