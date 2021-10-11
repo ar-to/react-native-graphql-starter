@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
@@ -20,6 +20,8 @@ import {
   View,
   Text,
   StyleSheet,
+  Linking,
+  Alert,
 } from 'react-native';
 // import OriginalWelcomeScreen from './src/components/originalWelcome.screen';
 
@@ -67,21 +69,28 @@ const styles = StyleSheet.create({
 
 const ChapterItem = ({ chapter, onPress }) => {
   const { name, description, webUrl } = chapter;
-  // let header, subheader;
 
-  // if (number) {
-  //   header = `Chapter ${number}`;
-  //   subheader = title;
-  // } else {
-  //   header = title;
-  // }
+  const handlePress = useCallback(async () => {
+    // Checking if the link is supported for links with custom URL scheme.
+    // const supported = await Linking.canOpenURL(webUrl);
+    const supported = await Linking.canOpenURL(webUrl);
+
+    if (supported) {
+      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+      // by some browser in the mobile
+      await Linking.openURL(webUrl);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${webUrl}`);
+    }
+  }, [webUrl]);
 
   return (
     <Pressable style={styles.item} onPress={onPress}>
-      <Text style={styles.header}>{name}</Text>
-      <Text style={styles.header}>{description}</Text>
-      <Text style={styles.header}>{webUrl}</Text>
-      {/* {subheader && <Text style={styles.subheader}>{subheader}</Text>} */}
+      <Text style={styles.header}>name: {name}</Text>
+      <Text style={styles.header}>description: {description}</Text>
+      <Text style={styles.header} onPress={handlePress}>
+        {webUrl}
+      </Text>
     </Pressable>
   );
 };
