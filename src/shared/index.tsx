@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { Linking, Alert } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 /**
  * Custom Hook for reusability
@@ -22,3 +23,38 @@ export const useHandleHyperlink = (webUrl: string) => {
   }, [webUrl]);
   return { handlePress };
 };
+
+export enum Screen {
+  PROJECTS = 'Projects',
+  PROJECT = 'Project',
+}
+
+/**
+ * Interfaces
+ * @see https://reactnavigation.org/docs/typescript/
+ */
+export interface Project {
+  name: string;
+  id: string;
+  description: string;
+  webUrl: string;
+  // fullPath: string;
+  // createdAt: string;
+  // archived: boolean;
+  // projectMembers: ProjectMembers;
+}
+
+export type RootStackParamList = {
+  Projects: undefined;
+  Project: { project: Project };
+};
+
+export type ProjectsProps = NativeStackScreenProps<
+  RootStackParamList,
+  Screen.PROJECTS
+>;
+
+export type ProjectProps = NativeStackScreenProps<
+  RootStackParamList,
+  Screen.PROJECT
+>;

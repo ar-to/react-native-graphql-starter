@@ -22,7 +22,14 @@ import {
   StyleSheet,
   TextInput,
 } from 'react-native';
-import { useHandleHyperlink } from './src/shared';
+import {
+  useHandleHyperlink,
+  RootStackParamList,
+  ProjectsProps,
+  ProjectProps,
+  Screen,
+  Project,
+} from './src/shared';
 // import OriginalWelcomeScreen from './src/components/originalWelcome.screen';
 
 // Initialize Apollo Client
@@ -67,8 +74,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const ChapterItem = ({ chapter, onPress }) => {
-  const { name, description, webUrl } = chapter;
+const ProjectItem = ({
+  project,
+  onPress,
+}: {
+  project: Project;
+  onPress: () => void;
+}) => {
+  const { name, description, webUrl } = project;
   const { handlePress } = useHandleHyperlink(webUrl);
 
   return (
@@ -82,13 +95,12 @@ const ChapterItem = ({ chapter, onPress }) => {
   );
 };
 
-function HomeScreen({ navigation }) {
+function HomeScreen({ navigation }: ProjectsProps) {
   const [search, setSearch] = React.useState('');
   const [searchValue, setSearchValue] = React.useState('');
   const { loading, error, data } = useQuery(PROJECTS_QUERY, {
     variables: { search },
   });
-  // console.log('>>>>', data, '\n search', search);
 
   if (error) {
     // return Error! ${error}`;
@@ -96,7 +108,6 @@ function HomeScreen({ navigation }) {
   }
 
   if (loading) {
-    // return <AppLoading />;
     return <Text>Loading</Text>;
   }
   return (
@@ -104,25 +115,27 @@ function HomeScreen({ navigation }) {
       <TextInput
         onChangeText={setSearchValue}
         value={searchValue}
-        placeholder="useless placeholder"
+        placeholder="mongodb"
         keyboardType="default"
       />
       <Button title="Search" onPress={() => setSearch(searchValue)} />
       <FlatList
         data={data.projects.nodes}
         renderItem={({ item }) => (
-          <ChapterItem
-            chapter={item}
-            onPress={() => navigation.navigate('Project', { project: item })}
+          <ProjectItem
+            project={item}
+            onPress={() =>
+              navigation.navigate(Screen.PROJECT, { project: item })
+            }
           />
         )}
-        keyExtractor={chapter => chapter.id.toString()}
+        keyExtractor={project => project.id.toString()}
       />
     </View>
   );
 }
 
-function DetailsScreen({ route }) {
+function ProjectScreen({ route }: ProjectProps) {
   const { project } = route.params;
   const { handlePress } = useHandleHyperlink(project?.webUrl);
 
@@ -137,19 +150,15 @@ function DetailsScreen({ route }) {
   );
 }
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
   return (
     <ApolloProvider client={client}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ title: 'Overview' }}
-          />
-          <Stack.Screen name="Project" component={DetailsScreen} />
+        <Stack.Navigator initialRouteName={Screen.PROJECTS}>
+          <Stack.Screen name={Screen.PROJECTS} component={HomeScreen} />
+          <Stack.Screen name={Screen.PROJECT} component={ProjectScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApolloProvider>
