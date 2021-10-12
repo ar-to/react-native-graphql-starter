@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
@@ -20,10 +20,9 @@ import {
   View,
   Text,
   StyleSheet,
-  Linking,
-  Alert,
   TextInput,
 } from 'react-native';
+import { useHandleHyperlink } from './src/shared';
 // import OriginalWelcomeScreen from './src/components/originalWelcome.screen';
 
 // Initialize Apollo Client
@@ -70,20 +69,7 @@ const styles = StyleSheet.create({
 
 const ChapterItem = ({ chapter, onPress }) => {
   const { name, description, webUrl } = chapter;
-
-  const handlePress = useCallback(async () => {
-    // Checking if the link is supported for links with custom URL scheme.
-    // const supported = await Linking.canOpenURL(webUrl);
-    const supported = await Linking.canOpenURL(webUrl);
-
-    if (supported) {
-      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
-      // by some browser in the mobile
-      await Linking.openURL(webUrl);
-    } else {
-      Alert.alert(`Don't know how to open this URL: ${webUrl}`);
-    }
-  }, [webUrl]);
+  const { handlePress } = useHandleHyperlink(webUrl);
 
   return (
     <Pressable style={styles.item} onPress={onPress}>
@@ -134,34 +120,19 @@ function HomeScreen({ navigation }) {
       />
     </View>
   );
-  // return (
-  //   <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-  //     <Text>Home Screen</Text>
-  //     <Button
-  //       title="Go to Details"
-  //       onPress={() =>
-  //         navigation.navigate('Details', {
-  //           itemId: 86,
-  //           otherParam: 'anything you want here',
-  //           data: {},
-  //         })
-  //       }
-  //     />
-  //   </View>
-  // );
 }
 
 function DetailsScreen({ route }) {
-  // const { itemId, otherParam, data } = route.params;
   const { project } = route.params;
+  const { handlePress } = useHandleHyperlink(project?.webUrl);
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Project Screen</Text>
-      <Text>itemId: {JSON.stringify(project)}</Text>
-      {/* <Text>Details Screen</Text>
-      <Text>itemId: {JSON.stringify(itemId)}</Text>
-      <Text>otherParam: {JSON.stringify(otherParam)}</Text>
-      <Text>data: {JSON.stringify(data)}</Text> */}
+      <Text style={styles.header}>name: {project?.name}</Text>
+      <Text style={styles.header}>description: {project?.description}</Text>
+      <Text style={styles.header} onPress={handlePress}>
+        {project?.webUrl}
+      </Text>
     </View>
   );
 }
