@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, Box, HStack, Spacer, Flex, Center } from 'native-base';
+import { format } from 'date-fns';
 import { useHandleHyperlink, ProjectProps } from '../shared';
 
 export default function ProjectScreen({ route }: ProjectProps) {
@@ -12,7 +13,7 @@ export default function ProjectScreen({ route }: ProjectProps) {
       <Box p="5" rounded="8" bg="cyan.700">
         <HStack alignItems="flex-start">
           <Text fontSize={12} color="cyan.50" fontWeight="medium">
-            {createdAt}
+            {format(new Date(createdAt), 'yyyy/mm/dd')}
           </Text>
           <Spacer />
           <Text fontSize={10} color="cyan.100">

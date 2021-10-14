@@ -3,7 +3,13 @@ import { useQuery } from '@apollo/client';
 import { FlatList, View } from 'react-native';
 import { Input, Button, Pressable, Text, Box, Flex } from 'native-base';
 import { PROJECTS_QUERY } from '../services/gitlab.api';
-import { useHandleHyperlink, ProjectsProps, Screen, Project } from '../shared';
+import {
+  useHandleHyperlink,
+  ProjectsProps,
+  Screen,
+  Project,
+  IGitlabProjectsResponse,
+} from '../shared';
 
 const ProjectItem = ({
   project,
@@ -42,15 +48,14 @@ const ProjectItem = ({
 export default function ProjectsScreen({ navigation }: ProjectsProps) {
   const [search, setSearch] = React.useState('');
   const [searchValue, setSearchValue] = React.useState('');
-  const { loading, error, data } = useQuery<Project, { search: string }>(
-    PROJECTS_QUERY,
-    {
-      variables: { search },
-    },
-  );
+  const { loading, error, data } = useQuery<
+    IGitlabProjectsResponse,
+    { search: string }
+  >(PROJECTS_QUERY, {
+    variables: { search },
+  });
 
   if (error) {
-    // return Error! ${error}`;
     return <Text>{JSON.stringify(error)}</Text>;
   }
 

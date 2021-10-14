@@ -34,6 +34,11 @@ export enum Screen {
  * Interfaces
  * @see https://reactnavigation.org/docs/typescript/
  */
+export interface IGitlabProjectsResponse {
+  projects: {
+    nodes: Project[];
+  };
+}
 export interface Project {
   name: string;
   id: string;
