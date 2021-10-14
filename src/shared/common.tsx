@@ -46,6 +46,7 @@ export interface Project {
 }
 
 export type RootStackParamList = {
+  Original: undefined;
   Projects: undefined;
   Project: { project: Project };
 };

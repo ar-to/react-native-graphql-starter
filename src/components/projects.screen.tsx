@@ -1,13 +1,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
-import {
-  FlatList,
-  Pressable,
-  Button,
-  View,
-  Text,
-  TextInput,
-} from 'react-native';
+import { FlatList, Pressable, View, Text } from 'react-native';
+import { Input, Button } from 'native-base';
 import { PROJECTS_QUERY } from '../services/gitlab.api';
 import {
   useHandleHyperlink,
@@ -50,30 +44,40 @@ export default function ProjectsScreen({ navigation }: ProjectsProps) {
     return <Text>{JSON.stringify(error)}</Text>;
   }
 
-  if (loading) {
-    return <Text>Loading</Text>;
-  }
   return (
     <View>
-      <TextInput
-        onChangeText={setSearchValue}
-        value={searchValue}
+      <Input
+        mx="3"
+        m="3"
         placeholder="mongodb"
-        keyboardType="default"
+        isFullWidth={true}
+        value={searchValue}
+        onChangeText={setSearchValue}
+        InputRightElement={
+          <Button
+            roundedLeft="0"
+            isLoading={loading}
+            isLoadingText="Loading"
+            onPress={() => setSearch(searchValue)}>
+            Search
+          </Button>
+        }
       />
-      <Button title="Search" onPress={() => setSearch(searchValue)} />
-      <FlatList
-        data={data.projects.nodes}
-        renderItem={({ item }) => (
-          <ProjectItem
-            project={item}
-            onPress={() =>
-              navigation.navigate(Screen.PROJECT, { project: item })
-            }
-          />
-        )}
-        keyExtractor={project => project.id.toString()}
-      />
+
+      {data && data.projects && data.projects.nodes && (
+        <FlatList
+          data={data.projects.nodes}
+          renderItem={({ item }) => (
+            <ProjectItem
+              project={item}
+              onPress={() =>
+                navigation.navigate(Screen.PROJECT, { project: item })
+              }
+            />
+          )}
+          keyExtractor={project => project.id.toString()}
+        />
+      )}
     </View>
   );
 }
