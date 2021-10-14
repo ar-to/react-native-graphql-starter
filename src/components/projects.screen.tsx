@@ -1,15 +1,9 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
-import { FlatList, Pressable, View, Text } from 'react-native';
-import { Input, Button } from 'native-base';
+import { FlatList, View } from 'react-native';
+import { Input, Button, Pressable, Text, Box, Flex } from 'native-base';
 import { PROJECTS_QUERY } from '../services/gitlab.api';
-import {
-  useHandleHyperlink,
-  ProjectsProps,
-  Screen,
-  Project,
-  styles,
-} from '../shared';
+import { useHandleHyperlink, ProjectsProps, Screen, Project } from '../shared';
 
 const ProjectItem = ({
   project,
@@ -22,12 +16,25 @@ const ProjectItem = ({
   const { handlePress } = useHandleHyperlink(webUrl);
 
   return (
-    <Pressable style={styles.item} onPress={onPress}>
-      <Text style={styles.header}>name: {name}</Text>
-      <Text style={styles.header}>description: {description}</Text>
-      <Text style={styles.header} onPress={handlePress}>
-        {webUrl}
-      </Text>
+    <Pressable onPress={onPress}>
+      <Box p="5" m={3} rounded="8" bg="cyan.700">
+        <Text color="cyan.50" mt="3" fontWeight="medium" fontSize={20}>
+          {name}
+        </Text>
+        <Text mt="2" fontSize={14} color="cyan.100">
+          {description}
+        </Text>
+        <Flex>
+          <Text
+            mt="2"
+            fontSize={12}
+            fontWeight="medium"
+            color="cyan.400"
+            onPress={handlePress}>
+            {webUrl}
+          </Text>
+        </Flex>
+      </Box>
     </Pressable>
   );
 };
@@ -35,9 +42,12 @@ const ProjectItem = ({
 export default function ProjectsScreen({ navigation }: ProjectsProps) {
   const [search, setSearch] = React.useState('');
   const [searchValue, setSearchValue] = React.useState('');
-  const { loading, error, data } = useQuery(PROJECTS_QUERY, {
-    variables: { search },
-  });
+  const { loading, error, data } = useQuery<Project, { search: string }>(
+    PROJECTS_QUERY,
+    {
+      variables: { search },
+    },
+  );
 
   if (error) {
     // return Error! ${error}`;

@@ -40,8 +40,8 @@ export interface Project {
   description: string;
   webUrl: string;
   // fullPath: string;
-  // createdAt: string;
-  // archived: boolean;
+  createdAt: string;
+  archived: boolean;
   // projectMembers: ProjectMembers;
 }
 

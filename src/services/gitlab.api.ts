@@ -16,6 +16,8 @@ export const PROJECTS_QUERY = gql`
         description
         webUrl
         fullPath
+        createdAt
+        archived
       }
     }
   }
