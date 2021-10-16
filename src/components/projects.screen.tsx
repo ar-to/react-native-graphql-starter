@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { FlatList, View } from 'react-native';
+import { FlatList, View, Dimensions } from 'react-native';
 import { Input, Button, Pressable, Text, Box, Flex } from 'native-base';
+// import { List } from 'react-content-loader/native';
+import ContentLoader, { Rect } from 'react-content-loader/native';
 import { PROJECTS_QUERY } from '../services/gitlab.api';
 import {
   useHandleHyperlink,
@@ -45,6 +47,39 @@ const ProjectItem = ({
   );
 };
 
+const MyLoader = () => {
+  // @see https://reactnative.dev/docs/dimensions
+  const window = Dimensions.get('window');
+  const screen = Dimensions.get('screen');
+  const [dimensions, setDimensions] = useState({ window, screen });
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener(
+      'change',
+      ({ window, screen }) => {
+        setDimensions({ window, screen });
+      },
+    );
+    return () => subscription?.remove();
+  });
+
+  return (
+    <ContentLoader
+      viewBox={`0 0 ${dimensions.window.width} 200`}
+      height={200}
+      backgroundColor="#dedede">
+      <Rect
+        x="20"
+        y="17"
+        rx="5"
+        ry="5"
+        width={dimensions.window.width - 40}
+        height="200"
+      />
+    </ContentLoader>
+  );
+};
+
 export default function ProjectsScreen({ navigation }: ProjectsProps) {
   const [search, setSearch] = React.useState('');
   const [searchValue, setSearchValue] = React.useState('');
@@ -58,6 +93,31 @@ export default function ProjectsScreen({ navigation }: ProjectsProps) {
   if (error) {
     return <Text>{JSON.stringify(error)}</Text>;
   }
+
+  const renderList = () => {
+    if (loading) {
+      return <MyLoader />;
+    } else {
+      return (
+        <>
+          {data && data.projects && data.projects.nodes && (
+            <FlatList
+              data={data.projects.nodes}
+              renderItem={({ item }) => (
+                <ProjectItem
+                  project={item}
+                  onPress={() =>
+                    navigation.navigate(Screen.PROJECT, { project: item })
+                  }
+                />
+              )}
+              keyExtractor={project => project.id.toString()}
+            />
+          )}
+        </>
+      );
+    }
+  };
 
   return (
     <View>
@@ -78,21 +138,7 @@ export default function ProjectsScreen({ navigation }: ProjectsProps) {
           </Button>
         }
       />
-
-      {data && data.projects && data.projects.nodes && (
-        <FlatList
-          data={data.projects.nodes}
-          renderItem={({ item }) => (
-            <ProjectItem
-              project={item}
-              onPress={() =>
-                navigation.navigate(Screen.PROJECT, { project: item })
-              }
-            />
-          )}
-          keyExtractor={project => project.id.toString()}
-        />
-      )}
+      {renderList()}
     </View>
   );
 }
