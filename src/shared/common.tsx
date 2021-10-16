@@ -39,6 +39,19 @@ export interface IGitlabProjectsResponse {
     nodes: Project[];
   };
 }
+
+export interface IUser {
+  id: string;
+  user: {
+    id: string;
+    name: string;
+    webUrl: string;
+  };
+}
+export interface ProjectMembers {
+  nodes: IUser[];
+}
+
 export interface Project {
   name: string;
   id: string;
@@ -47,7 +60,7 @@ export interface Project {
   // fullPath: string;
   createdAt: string;
   archived: boolean;
-  // projectMembers: ProjectMembers;
+  projectMembers: ProjectMembers;
 }
 
 export type RootStackParamList = {

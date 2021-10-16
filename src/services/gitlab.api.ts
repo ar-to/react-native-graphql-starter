@@ -18,6 +18,16 @@ export const PROJECTS_QUERY = gql`
         fullPath
         createdAt
         archived
+        projectMembers {
+          nodes {
+            id
+            user {
+              id
+              name
+              webUrl
+            }
+          }
+        }
       }
     }
   }
