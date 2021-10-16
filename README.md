@@ -4,7 +4,7 @@
 
 This project is not using Expo but rather the React Native CLI so follow [these instructions](https://reactnative.dev/docs/environment-setup). Steps below are taken from there.
 
-**Note: This project was built and tested for ios but the components are cross platforms so should work with the android simulator as well. The react navigator library was setup to work with android as well.**
+**Note: This project was built and tested on a mac with an iOS 15.0 iPhone13 simulator but the components are cross platforms so should work with the android simulator as well. The react navigator library was setup to work with android as well.**
 
 ```shell
 # install packages
