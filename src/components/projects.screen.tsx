@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { FlatList, View, Dimensions } from 'react-native';
 import { Input, Button, Pressable, Text, Box, Flex } from 'native-base';
-// import { List } from 'react-content-loader/native';
 import ContentLoader, { Rect } from 'react-content-loader/native';
 import { PROJECTS_QUERY } from '../services/gitlab.api';
 import {
